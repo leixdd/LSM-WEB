@@ -56,3 +56,10 @@ Route::get('units', function () {
         ]);
     }
 });
+
+Route::group([
+    'prefix' => 'customers'
+], function() {
+    Route::get('/', 'API\CustomerController@listCustomers');
+    Route::post('/', 'API\CustomerController@addCustomer');
+});
