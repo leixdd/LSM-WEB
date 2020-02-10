@@ -64,4 +64,7 @@ Route::group([
     Route::post('/', 'API\CustomerController@addCustomer');
     Route::get('/bindItems/{id}', 'API\ItemBindController@getAllBindItems');
     Route::post('/bindItem', 'API\ItemBindController@bindItemToCustomer');
+
+    //Deliveries
+    Route::get('/deliveries/{id}', 'API\DeliveriesBindController@getDRs');
 });

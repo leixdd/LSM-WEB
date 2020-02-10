@@ -14,4 +14,8 @@ class DR extends Model
     public function bank_transactions() {
         return $this->belongsToMany(BankTransaction::class)->withTimestamps();
     }
+
+    public function billing_items() {
+        return $this->hasMany(\App\Models\Billing::class, 'dr_trans_no');
+    }
 }
