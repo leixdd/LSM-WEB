@@ -19,6 +19,7 @@ class CreateDRITEMSTable extends Migration
             $table->double('quantity');
             $table->unsignedBigInteger('item_id'); //TODO: to be changed by Item ID if Inventory Module was applied
             $table->double('unit_price');
+            $table->integer('type')->default(0);
             $table->timestamps();
         });
     }

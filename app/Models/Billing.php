@@ -4,9 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class BankTransaction extends Model
+class Billing extends Model
 {
-
     protected $guarded = [];
 
 }

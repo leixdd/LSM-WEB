@@ -16,14 +16,16 @@ class CreateDRSTable extends Migration
         Schema::create('deliveryReciepts', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('dr_no');
-            $table->unsignedBigInteger('si_id')->default(0);
             $table->string('delivered_to');
             $table->string('address');
             $table->string('delivery_style');
             $table->dateTime('date');
+            $table->dateTime('date_to_be_paid');
             $table->string('terms');
             $table->string('tin');
             $table->bigInteger('updated_by');
+            $table->double('amount_received', 10, 2);
+            $table->double('total_amount', 10, 2);
             $table->timestamps();
             $table->softDeletes();
         });

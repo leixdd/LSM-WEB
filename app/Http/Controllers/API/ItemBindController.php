@@ -33,6 +33,7 @@ class ItemBindController extends Controller
                 ->where('customer_id', $id)->get()->toJSON(),
         ]);
     }
+    
 
     public function bindItemToCustomer(Request $request)
     {
