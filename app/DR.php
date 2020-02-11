@@ -18,4 +18,12 @@ class DR extends Model
     public function billing_items() {
         return $this->hasMany(\App\Models\Billing::class, 'dr_trans_no');
     }
+
+    public function customer() {
+        return $this->hasOne(\App\Customer::class, 'id', 'delivered_to');
+    }
+
+    public function user() {
+        return $this->hasOne(\App\User::class, 'id', 'updated_by');
+    }
 }
