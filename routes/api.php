@@ -32,6 +32,7 @@ Route::group(['prefix' => 'sales'], function () {
     Route::post('save', 'API\salesController@saveDelivery');
     Route::group(['prefix' => 'reports'], function () {
         Route::get('sales', 'API\salesController@generate_rpt_sales');
+        Route::get('ncg', 'API\ReportsController@getSalesCost');
     });
 });
 
@@ -63,6 +64,7 @@ Route::group([
     Route::get('/', 'API\CustomerController@listCustomers');
     Route::post('/', 'API\CustomerController@addCustomer');
     Route::get('/bindItems/{id}', 'API\ItemBindController@getAllBindItems');
+    Route::post('removeBindItem/{id}', 'API\ItemBindController@deleteItem');
     Route::post('/bindItem', 'API\ItemBindController@bindItemToCustomer');
 
     //Deliveries

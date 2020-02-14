@@ -78,4 +78,26 @@ class ItemBindController extends Controller
         ]);
 
     }
+
+    public function deleteItem(Request $request, $id) {
+        $item_ = CustomerItem::find($id);
+
+        if(!$item_) {
+            return response([
+                'success' => false,
+                'data' => [
+                    'Server_Response' => [
+                        '[404] : => Item was not existing',
+                    ],
+                ]
+            ]);
+        }
+
+        $item_->delete();
+
+        return response([
+            'success' => true,
+            'data' => 'Item was successfully Unbound to the customer items.'
+        ]);
+    }
 }
