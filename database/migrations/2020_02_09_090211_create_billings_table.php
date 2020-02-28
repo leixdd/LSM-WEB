@@ -19,6 +19,7 @@ class CreateBillingsTable extends Migration
             $table->unsignedBigInteger('item_id');
             $table->integer('quantity');
             $table->double('amount', 10, 2);
+            $table->integer('isReturned')->default(0);
             $table->timestamps();
         });
     }

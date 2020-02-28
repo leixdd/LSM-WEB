@@ -33,7 +33,6 @@ class ItemBindController extends Controller
                 ->where('customer_id', $id)->get()->toJSON(),
         ]);
     }
-    
 
     public function bindItemToCustomer(Request $request)
     {
@@ -79,17 +78,58 @@ class ItemBindController extends Controller
 
     }
 
-    public function deleteItem(Request $request, $id) {
+    public function editBindItem(Request $request)
+    {
+        $validator = \Validator::make($request->all(), [
+            "bindID" => 'required|exists:customer_items,id',
+            "selling_price" => 'required|numeric',
+            'discount' => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            return response([
+                'success' => false,
+                'data' => $validator->errors(),
+            ]);
+        }
+
+        DB::beginTransaction();
+        try {
+
+            $binded_item = CustomerItem::find($request->bindID);
+            $binded_item->selling_price = $request->selling_price;
+            $binded_item->discount = $request->discount;
+            $binded_item->save();
+
+        } catch(\ValidationException $e){
+            
+            DB::rollback();
+            return $this->error_response($e);
+        }catch (\Exception $e) {
+            DB::rollback();
+            return $this->error_response($e);
+        }
+
+        DB::commit();
+
+        return response([
+            'success' => true,
+            'data' => 'Success!, Binded Item was successfully Updated',
+        ]);
+    }
+
+    public function deleteItem(Request $request, $id)
+    {
         $item_ = CustomerItem::find($id);
 
-        if(!$item_) {
+        if (!$item_) {
             return response([
                 'success' => false,
                 'data' => [
                     'Server_Response' => [
                         '[404] : => Item was not existing',
                     ],
-                ]
+                ],
             ]);
         }
 
@@ -97,7 +137,7 @@ class ItemBindController extends Controller
 
         return response([
             'success' => true,
-            'data' => 'Item was successfully Unbound to the customer items.'
+            'data' => 'Item was successfully Unbound to the customer items.',
         ]);
     }
 }

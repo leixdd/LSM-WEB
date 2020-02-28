@@ -39,9 +39,11 @@ Route::group(['prefix' => 'sales'], function () {
 Route::group([
     'prefix' => 'items'
 ], function() {
-    Route::post('save', 'API\ItemController@save');
     Route::get('/', 'API\ItemController@getItems');
+    Route::post('save', 'API\ItemController@save');
+    Route::post('edit/{id}', 'API\ItemController@edit');
     Route::post('remove/{id}', 'API\ItemController@deleteItem');
+    
 });
 
 Route::get('units', function () {
@@ -64,9 +66,12 @@ Route::group([
     Route::get('/', 'API\CustomerController@listCustomers');
     Route::post('/', 'API\CustomerController@addCustomer');
     Route::get('/bindItems/{id}', 'API\ItemBindController@getAllBindItems');
+    Route::post('/editBindItem', 'API\ItemBindController@editBindItem');
     Route::post('removeBindItem/{id}', 'API\ItemBindController@deleteItem');
     Route::post('/bindItem', 'API\ItemBindController@bindItemToCustomer');
 
     //Deliveries
     Route::get('/deliveries/{id}', 'API\DeliveriesBindController@getDRs');
+
+    Route::post('/setToReturn', 'API\DeliveriesBindController@setToReturn');
 });

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use DB;
-use Log;
 use App\Models\Item;
+use DB;
+use Illuminate\Http\Request;
+use Log;
 
 class ItemController extends Controller
 {
@@ -23,21 +23,22 @@ class ItemController extends Controller
         ]);
     }
 
-    public function save(Request $request) {
+    public function save(Request $request)
+    {
         $vd = \Validator::make($request->all(), [
             'item_name' => 'required',
-            'item_cost' => 'required|numeric', 
-            'item_size' => 'required'
+            'item_cost' => 'required|numeric',
+            'item_size' => 'required',
         ], [
             'item_name.required' => 'Item Name must have a value',
-            'item_cost.required' => 'Unit Price must have a value', 
-            'item_unit.required' => 'Unit must have a value'
+            'item_cost.required' => 'Unit Price must have a value',
+            'item_size.required' => 'Unit must have a value',
         ]);
 
-        if($vd->fails()) {
+        if ($vd->fails()) {
             return response([
                 'success' => false,
-                'data' => $vd->errors()
+                'data' => $vd->errors(),
             ]);
         }
 
@@ -49,15 +50,14 @@ class ItemController extends Controller
                 'item_name' => $request->item_name,
                 'item_size' => $request->item_size,
             ])->count() > 0;
-            
 
-            if(!$exist) {
+            if (!$exist) {
                 Item::create([
                     'item_name' => $request->item_name,
                     'item_size' => $request->item_size,
-                    'item_cost' => $request->item_cost
+                    'item_cost' => $request->item_cost,
                 ]);
-            }else {
+            } else {
                 return response([
                     'success' => false,
                     'data' => [
@@ -68,11 +68,10 @@ class ItemController extends Controller
                 ]);
             }
 
-
-        }catch(\ValidationException $e) {
+        } catch (\ValidationException $e) {
             DB::rollback();
             return $this->error_response($e);
-        }catch(\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             return $this->error_response($e);
         }
@@ -81,40 +80,98 @@ class ItemController extends Controller
 
         return response([
             'success' => true,
-            'data' => 'Success!, Item ' . $request->item_name . ' was saved into our database'
+            'data' => 'Success!, Item ' . $request->item_name . ' was saved into our database',
         ]);
-    } 
+    }
 
-    public function getItems() {
+    public function getItems()
+    {
         $d = (object) Item::with('unit')->get();
         $def_v = [];
-        
-        foreach($d as $data) {
-         $def_v[] = [
-            'item_name' => $data->item_name,
-            'item_cost' => $data->item_cost,
-            'item_size' => $data->item_size,
-            'item_id' => $data->id
-         ];   
+
+        foreach ($d as $data) {
+            $def_v[] = [
+                'item_name' => $data->item_name,
+                'item_cost' => $data->item_cost,
+                'item_size' => $data->item_size,
+                'item_id' => $data->id,
+            ];
         }
 
         return response([
             'success' => true,
-            'data' => json_encode($def_v)
+            'data' => json_encode($def_v),
         ]);
     }
 
-    public function deleteItem($id) {
+    public function edit(Request $request, $id)
+    {
         $item_ = Item::find($id);
 
-        if(!$item_) {
+        if (!$item_) {
             return response([
                 'success' => false,
                 'data' => [
                     'Server_Response' => [
                         '[404] : => Item was not existing',
                     ],
-                ]
+                ],
+            ]);
+        }
+
+        $vd = \Validator::make($request->all(), [
+            'item_name' => 'required',
+            'item_cost' => 'required|numeric',
+            'item_size' => 'required',
+        ], [
+            'item_name.required' => 'Item Name must have a value',
+            'item_cost.required' => 'Unit Price must have a value',
+            'item_size.required' => 'Item Size must have a value',
+        ]);
+
+        if ($vd->fails()) {
+            return response([
+                'success' => false,
+                'data' => $vd->errors(),
+            ]);
+        }
+
+        DB::beginTransaction();
+
+        try {
+
+            $item_->item_name = $request->item_name;
+            $item_->item_cost = $request->item_cost;
+            $item_->item_size = $request->item_size;
+
+            $item_->save();
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $this->error_response($e);
+        }
+
+        DB::commit();
+        //$item_->delete();
+
+        return response([
+            'success' => true,
+            'data' => 'Item was successfully Updated.',
+        ]);
+    }
+
+    public function deleteItem($id)
+    {
+        $item_ = Item::find($id);
+
+        if (!$item_) {
+            return response([
+                'success' => false,
+                'data' => [
+                    'Server_Response' => [
+                        '[404] : => Item was not existing',
+                    ],
+                ],
             ]);
         }
 
@@ -122,7 +179,7 @@ class ItemController extends Controller
 
         return response([
             'success' => true,
-            'data' => 'Item was successfully Deleted.'
+            'data' => 'Item was successfully Deleted.',
         ]);
 
     }

@@ -19,6 +19,10 @@ class DR extends Model
         return $this->hasMany(\App\Models\Billing::class, 'dr_trans_no');
     }
 
+    public function billed_items() {
+        return $this->hasMany(\App\Models\Billing::class, 'dr_trans_no')->where('isReturned', 0);
+    }
+
     public function customer() {
         return $this->hasOne(\App\Customer::class, 'id', 'delivered_to');
     }

@@ -165,8 +165,6 @@ class salesController extends Controller
             $rpts[$k]['COST'] = collect(\App\Models\Item::select('id', 'item_cost')->whereIn('id', $v)->get()->toArray())->sum('item_cost');
         });
 
-        \Log::info($rpts);
-
         return response([
             'success' => true,
             'data' => $rpts
