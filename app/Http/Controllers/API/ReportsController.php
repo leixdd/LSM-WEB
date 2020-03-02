@@ -6,6 +6,7 @@ use App\DR_ITEM;
 use App\Http\Controllers\Controller;
 use App\Models\Billing;
 use DB;
+use App\DR;
 
 class ReportsController extends Controller
 {
@@ -45,5 +46,18 @@ class ReportsController extends Controller
             'data' => $data,
         ]);
 
+    }
+
+    public function getDueDates() {
+        //getting all dr that was unpaid or inComplete 
+        $dates = DR::where([
+            [DB::raw('DATEDIFF(date_to_be_paid, date)'), '<=', 90],
+            [DB::raw('(total_amount - amount_received)'), '>', 0]
+        ])->get()->toArray();
+
+        return response([
+            'success' => true,
+            'data' => $dates
+        ]);
     }
 }
