@@ -50,9 +50,9 @@ class ReportsController extends Controller
 
     public function getDueDates() {
         //getting all dr that was unpaid or inComplete 
-        $dates = DR::where([
-            [DB::raw('DATEDIFF(date_to_be_paid, date)'), '<=', 90],
-            [DB::raw('(total_amount - amount_received)'), '>', 0]
+        $dates = DR::select('deliveryreciepts.date_to_be_paid', 'deliveryreciepts.dr_no', 'customers.customer_name', 'deliveryreciepts.amount_received', 'deliveryreciepts.total_amount' , \DB::raw('DATEDIFF(deliveryreciepts.date_to_be_paid, deliveryreciepts.date) as remaining_days'))->join('customers', 'customers.id', '=', 'deliveryreciepts.delivered_to')->where([
+            [DB::raw('DATEDIFF(deliveryreciepts.date_to_be_paid, deliveryreciepts.date)'), '<=', 90],
+            [DB::raw('(deliveryreciepts.total_amount - deliveryreciepts.amount_received)'), '>', 0]
         ])->get()->toArray();
 
         return response([

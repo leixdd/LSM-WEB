@@ -28,7 +28,7 @@ class ItemBindController extends Controller
         return response([
             'success' => true,
             'data' =>
-            CustomerItem::select('items.item_name', 'items.item_size', 'customer_items.selling_price', 'customer_items.id', 'customer_items.discount')
+            CustomerItem::select('items.item_name', 'items.item_size', 'customer_items.selling_price', 'items.id', 'customer_items.discount')
                 ->join('items', 'items.id', '=', 'customer_items.item_id')
                 ->where('customer_id', $id)->get()->toJSON(),
         ]);

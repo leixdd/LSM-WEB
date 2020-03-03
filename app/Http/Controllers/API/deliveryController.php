@@ -16,6 +16,7 @@ class deliveryController extends Controller
 {
     public function saveDelivery(Request $request)
     {
+        \Log::error($request->all());
         $validate_data = \Validator::make($request->all(), [
             'dr_no' => 'required|unique:deliveryreciepts',
             'deliverd_to' => 'required|exists:customers,id',
