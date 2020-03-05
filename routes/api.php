@@ -76,7 +76,7 @@ Route::group([
     Route::post('/setToReturn', 'API\DeliveriesBindController@setToReturn');
 });
 
-/*
+
 Route::get('/util', function () {
     $customers = \App\Customer::select('id')->whereNotIn('id', \App\CustomerItem::select('customer_id')->distinct()->get()->toArray())->get();
     $items = \App\Models\Item::select('id as item_id', 'item_cost as selling_price')->get()->toArray();
@@ -103,4 +103,3 @@ Route::get('/util', function () {
 
     return response(['success' => true]);
 });
-*/
