@@ -54,13 +54,28 @@ class ItemBindController extends Controller
 
         try {
 
-            CustomerItem::updateOrCreate(
-                ['customer_id' => $request->customer_id, 'item_id' => $request->item_id],
-                [
-                    'selling_price' => $request->selling_price,
-                    'discount' => $request->discount,
-                ],
-            );
+            $exist = CustomerItem::where([
+                ['customer_id', $request->customer_id],
+                ['item_id', $request->item_id],
+            ])->first();
+
+            if ($exist) {
+                return response([
+                    'success' => false,
+                    'data' => [
+                        'Server_Response' => [
+                            'You already bind this item',
+                        ],
+                    ],
+                ]);
+            }
+
+            CustomerItem::create([
+                'selling_price' => $request->selling_price,
+                'discount' => $request->discount,
+                'customer_id' => $request->customer_id,
+                'item_id' => $request->item_id,
+            ]);
 
         } catch (\ValidationException $e) {
             DB::rollback();
