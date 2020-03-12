@@ -28,9 +28,9 @@ class ItemBindController extends Controller
         return response([
             'success' => true,
             'data' =>
-            CustomerItem::select('items.id as item_id','items.item_name', 'items.item_size', 'customer_items.selling_price', 'customer_items.id', 'customer_items.discount')
+            CustomerItem::select('items.id as item_id', 'items.item_name', 'items.item_size', 'customer_items.selling_price', 'customer_items.id', 'customer_items.discount')
                 ->join('items', 'items.id', '=', 'customer_items.item_id')
-                ->where('customer_id', $id)->get()->toJSON()
+                ->where('customer_id', $id)->get()->toJSON(),
         ]);
     }
 
@@ -54,12 +54,13 @@ class ItemBindController extends Controller
 
         try {
 
-            CustomerItem::create([
-                'customer_id' => $request->customer_id,
-                'item_id' => $request->item_id,
-                'selling_price' => $request->selling_price,
-                'discount' => $request->discount,
-            ]);
+            CustomerItem::updateOrCreate(
+                ['customer_id' => $request->customer_id, 'item_id' => $request->item_id],
+                [
+                    'selling_price' => $request->selling_price,
+                    'discount' => $request->discount,
+                ],
+            );
 
         } catch (\ValidationException $e) {
             DB::rollback();
@@ -103,10 +104,10 @@ class ItemBindController extends Controller
             $binded_item->save();
 
             \Log::info($binded_item);
-        } catch(\ValidationException $e){
+        } catch (\ValidationException $e) {
             DB::rollback();
             return $this->error_response($e);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             return $this->error_response($e);
         }
