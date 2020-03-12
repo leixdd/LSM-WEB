@@ -30,10 +30,10 @@ class DeliveriesBindController extends Controller
         $models = DR::with('bank_transactions', 'billing_items', 'user', 'customer')->where('delivered_to', $id)->get()->toArray();
         for ($i = 0; $i < count($models); $i++) {
             $billing_items = $models[$i]['billing_items'];
-            $models[$i]['total_amount'] = Billing::select(DB::raw('SUM((amount * quantity)) AS amount'))->where([
+            $models[$i]['total_amount'] = (Billing::select(DB::raw('SUM((amount * quantity)) AS amount'))->where([
                 ['dr_trans_no', $models[$i]["id"]],
                 ['isReturned', 0],
-            ])->first()->amount;
+            ])->first()->amount) ?? 0 ;
             
             for ($j = 0; $j < count($billing_items); $j++) {
                 $models[$i]['billing_items'][$j]['item'] = Item::find($billing_items[$j]['item_id']);
